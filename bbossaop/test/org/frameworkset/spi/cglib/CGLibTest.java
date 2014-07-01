@@ -16,7 +16,12 @@
 
 package org.frameworkset.spi.cglib;
 
+import java.util.List;
+
+import org.frameworkset.soa.ObjectSerializable;
 import org.frameworkset.spi.ApplicationContext;
+import org.frameworkset.util.ClassUtil;
+import org.frameworkset.util.ClassUtil.ClassInfo;
 import org.junit.Test;
 
 /**
@@ -38,6 +43,19 @@ public class CGLibTest {
 		System.out.println(service.sayhello("多多"));
 	}
 	
+	@Test
+	public void testCGlib()
+	{
+		//远程调用
+		CGLibService service = (CGLibService)context_provider.getBeanObject("(rmi::172.16.17.216:1099)/cglibbean");
+		ClassInfo into = ClassUtil.getClassInfo(service.getClass());
+		List<Class> classes = into.getSuperClasses();
+		System.out.println(service instanceof CGLibService);
+		System.out.println(service.getClass().getName());
+	}
+	
+	
+	
 	
 	@Test
 	public void localtest()
@@ -46,5 +64,7 @@ public class CGLibTest {
 		CGLibService service = (CGLibService)context_provider.getBeanObject("cglibbean");
 		System.out.println(service.sayhello("多多"));
 	}
+	
+	
 
 }

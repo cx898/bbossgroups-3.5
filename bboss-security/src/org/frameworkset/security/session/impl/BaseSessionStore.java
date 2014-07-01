@@ -18,6 +18,7 @@ package org.frameworkset.security.session.impl;
 import java.util.UUID;
 
 import org.frameworkset.security.session.Session;
+import org.frameworkset.security.session.SessionBasicInfo;
 import org.frameworkset.security.session.SessionStore;
 
 /**
@@ -50,7 +51,7 @@ public abstract class BaseSessionStore implements SessionStore {
 		// TODO Auto-generated method stub
 
 	}
-	public abstract Session createSession(String appKey,String referip,String reqesturi);
+	public abstract Session createSession(SessionBasicInfo sessionBasicInfo);
 	public long getSessionTimeout() {
 		return sessionManager.getSessionTimeout();
 	}
@@ -63,6 +64,12 @@ public abstract class BaseSessionStore implements SessionStore {
 		return sessionManager.isHttpOnly();
 	}
 	
+	public boolean isSecure() {
+		return sessionManager.isSecure();
+	}
+	public String getDomain() {
+		return sessionManager.getDomain();
+	}
 	public long getCookieLiveTime() {
 		return sessionManager.getCookieLiveTime();
 	}
