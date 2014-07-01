@@ -16,7 +16,6 @@
 
 package org.frameworkset.soa;
 
-import com.frameworkset.util.ValueObjectUtil;
 
 /**
  * <p>Title: BaseSerial.java</p> 
@@ -30,22 +29,22 @@ import com.frameworkset.util.ValueObjectUtil;
  */
 public abstract class BaseSerial<T> implements Serial<T> {
 
-	public T deserialize(String object) {
-		try
-		{
-			byte[] bytes = ValueObjectUtil.byteArrayDecoder(object);
-			return this.deserialize(bytes);
-		}
-		catch(RuntimeException e)
-		{
-			throw e;
-		}
-		catch(Exception d)
-		{
-			throw new SerialException(d);
-		}
-	}
+//	public T deserialize(Pro pro,String object) {
+//		try
+//		{
+//			byte[] bytes = ValueObjectUtil.byteArrayDecoder(object);
+//			return this.deserialize(bytes);
+//		}
+//		catch(RuntimeException e)
+//		{
+//			throw e;
+//		}
+//		catch(Exception d)
+//		{
+//			throw new SerialException(d);
+//		}
+//	}
 
-	
+
 
 }

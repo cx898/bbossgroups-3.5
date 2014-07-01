@@ -504,10 +504,11 @@ public class ObjectSerializable {
 	private final static void convertBeanObjectToXML(String name, Object obj,
 			Class type, String dateformat, Writer ret,SerialStack serialStack,String currentAddress)
 			throws Exception {
+		ClassInfo classinfo = null;
 		if (obj != null)
 		{
 			type = obj.getClass();
-			ClassInfo classinfo = ClassUtil.getClassInfo(type);
+			classinfo = ClassUtil.getClassInfo(type);
 			if(!classinfo.isBaseprimary())
 			{
 				String address = serialStack.getRefID(obj);
@@ -932,7 +933,7 @@ public class ObjectSerializable {
 		}
 
 		else {
-			basicTypeCast(name, obj, type, dateformat, ret, serialStack,currentAddress);
+			basicTypeCast(name, obj, type, classinfo, dateformat, ret, serialStack,currentAddress);
 		}
 
 		// Object arrayObj;
@@ -966,7 +967,7 @@ public class ObjectSerializable {
 	 * 
 	 */
 	private final static boolean basicTypeCast(String name, Object obj,
-			Class type, String dateformat, Writer ret,SerialStack stack,String currentAddress)
+			Class type, ClassInfo classInfo,String dateformat, Writer ret,SerialStack stack,String currentAddress)
 			throws Exception {
 		if (obj == null) {
 			if (name == null)
@@ -1168,22 +1169,28 @@ public class ObjectSerializable {
 			}
 			else
 			{
-				String className = obj.getClass().getName();
+//				ClassInfo classInfo = ClassUtil.getClassInfo(obj.getClass());
+				String className = classInfo.getName();
 				MagicClass magicclass = SerialFactory.getSerialFactory().getMagicClass(className);
-				if(magicclass == null)
+				if(magicclass != null && magicclass.getPreserialObject() != null)
+				{
+					obj = magicclass.getPreserialObject().prehandle(obj);
+				}
+				if(magicclass == null )
 				{
 					if (name == null)
 						ret.append("<p cs=\"")
-								.append(obj.getClass().getName())
+								.append(className)
 								.append("\">");
 					else
 						ret.append("<p n=\"").append(name).append("\" cs=\"").append(
-								obj.getClass().getName()).append("\">");
-					appendBeanProperties(obj, type, dateformat, ret,stack,currentAddress);
+								className).append("\">");
+					appendBeanProperties(obj, type,classInfo, dateformat, ret,stack,currentAddress);
 				}
-				else
+				else if(magicclass.getSerailObject() != null)//指定了序列化插件				
 				{
-					byte[] object = magicclass.getSerailObject().serialize(obj);
+					
+					String object = magicclass.getSerailObject().serialize(obj);
 					if (name == null)
 						ret.append("<p mg=\"")
 								.append(magicclass.getMagicnumber())
@@ -1192,11 +1199,21 @@ public class ObjectSerializable {
 					
 					else
 						ret.append("<p n=\"").append(name).append("\" mg=\"").append(magicclass.getMagicnumber()).append("\">");
-						ret.append("<![CDATA[")
-						.append(
-								ValueObjectUtil
-										.byteArrayEncoder(object))
-						.append("]]>");
+					ret.append("<![CDATA[")
+					.append(object)
+					.append("]]>");
+				}
+				
+				else
+				{
+					if (name == null)
+						ret.append("<p mg=\"")
+								.append(magicclass.getMagicnumber())
+								.append("\">");
+					else
+						ret.append("<p n=\"").append(name).append("\" mg=\"").append(
+								magicclass.getMagicnumber()).append("\">");
+					appendBeanProperties(obj, type,classInfo, dateformat, ret,stack,currentAddress);
 				}
 			}
 			ret.append("</p>");
@@ -1243,7 +1260,7 @@ public class ObjectSerializable {
 
 		ret.append("</construction>");
 
-		appendBeanProperties(obj, type, dateformat, ret,
+		appendBeanProperties(obj, type,ClassUtil.getClassInfo(type), dateformat, ret,
 				throwable_filterattributes,stack,currentAddress);
 
 	}
@@ -1291,10 +1308,10 @@ public class ObjectSerializable {
 
 	}
 
-	private static void appendBeanProperties(Object obj, Class type,
+	private static void appendBeanProperties(Object obj, Class type,ClassInfo beanInfo,
 			String dateformat, Writer ret,SerialStack stack,String currentAddress) throws Exception {
 
-		appendBeanProperties(obj, type, dateformat, ret, null, stack,currentAddress);
+		appendBeanProperties(obj, type, beanInfo, dateformat, ret, null, stack,currentAddress);
 
 	}
 
@@ -1308,10 +1325,10 @@ public class ObjectSerializable {
 		return false;
 	}
 
-	private static void appendBeanProperties(Object obj, Class type,
+	private static void appendBeanProperties(Object obj, Class type1,ClassInfo beanInfo,
 			String dateformat, Writer ret, String[] filters,SerialStack stack,String currentAddress)
 			throws Exception {
-		ClassInfo beanInfo = ClassUtil.getClassInfo(type);		
+//		ClassInfo beanInfo = ClassUtil.getClassInfo(type);		
 //		beanInfo_.getDeclaredFields();
 //		beanInfo_.getPropertyDescriptor("");
 		

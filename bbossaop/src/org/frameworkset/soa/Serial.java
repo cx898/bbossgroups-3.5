@@ -16,6 +16,7 @@
 
 package org.frameworkset.soa;
 
+
 /**
  * <p>Title: Serial.java</p> 
  * <p>Description: 对象序列化工厂</p>
@@ -26,7 +27,7 @@ package org.frameworkset.soa;
  * @version 1.0
  */
 public interface Serial<T> {
-	public byte[] serialize(T object); 
-	public T deserialize(byte[] object);
+	
+	public String serialize(T object); 
 	public T deserialize(String object);
 }

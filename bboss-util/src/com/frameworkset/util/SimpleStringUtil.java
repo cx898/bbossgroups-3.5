@@ -1412,9 +1412,9 @@ outStr = "2010年02月07日11时许，周灵颖报警：在2路公交车上被�
 				outStr += replace;
 		}
 		if (htmlencode) {
-			return SimpleStringUtil.HTMLEncode(outStr);
-		} else if (htmlencode) {
-			return SimpleStringUtil.HTMLEncodej(outStr);
+			return SimpleStringUtil.HTMLNoBREncode(outStr);
+		} else if (htmldecode) {
+			return SimpleStringUtil.HTMLNoBREncodej(outStr);
 		} else {
 			return outStr;
 		}
@@ -2143,6 +2143,11 @@ outStr = "2010年02月07日11时许，周灵颖报警：在2路公交车上被�
 		return value == null || "".equals(value);
 	}
 	
+	public static boolean isNotEmpty(String value)
+	{
+		return value != null && !"".equals(value);
+	}
+	
 	public static String formatException(Throwable exception)
 	{
 		StringWriter out = new StringWriter();
@@ -2703,6 +2708,29 @@ outStr = "2010年02月07日11时许，周灵颖报警：在2路公交车上被�
 			ret.append("}");
 		}
 		
+	}
+    
+    public static String formatTimeToString(long mss) {
+		long days = mss / (1000 * 60 * 60 * 24);
+		long hours = (mss % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60);
+		long minutes = (mss % (1000 * 60 * 60)) / (1000 * 60);
+		long seconds = (mss % (1000 * 60)) / 1000;
+
+		StringBuffer sb = new StringBuffer();
+		if (days != 0) {
+			sb.append(days + "天");
+		}
+		if (hours != 0) {
+			sb.append(hours + "小时");
+		}
+		if (minutes != 0) {
+			sb.append(minutes + "分钟");
+		}
+		if (seconds != 0) {
+			sb.append(seconds + "秒");
+		}
+
+		return sb.toString();
 	}
 	
 }
